@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SwachhSnap</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Modern App Styling */
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Poppins', sans-serif;
+            padding-bottom: 80px; /* Space for bottom nav */
+        }
+
+        /* The Top Header */
+        .app-header {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 20px 20px 40px 20px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .user-welcome { font-size: 0.9rem; opacity: 0.9; }
+        .app-title { font-weight: 600; font-size: 1.5rem; margin: 0; }
+
+        /* The Main "Card" overlapping the header */
+        .action-card {
+            background: white;
+            margin: -30px 20px 20px 20px;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        /* Button Container for Two Buttons */
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* Universal Scan Button Style */
+        .scan-btn {
+            width: 90px;
+            height: 90px;
+            border-radius: 20px;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .scan-btn:active { transform: scale(0.95); }
+
+        /* Specific Styles */
+        .btn-camera { background: linear-gradient(145deg, #ffffff, #f0f0f0); border: 2px solid #2ecc71; }
+        .btn-gallery { background: linear-gradient(145deg, #fffcf5, #fef9e7); border: 2px solid #f39c12; }
+
+        .scan-icon { font-size: 30px; margin-bottom: 5px; }
+        .btn-label { font-size: 12px; font-weight: 600; }
+
+        /* Location Badge */
+        .location-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        /* Recent Activity List */
+        .section-title { padding: 0 25px; font-weight: 600; color: #34495e; margin-bottom: 15px; }
+        
+        .activity-item {
+            background: white;
+            margin: 0 20px 15px 20px;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+        .activity-icon {
+            width: 45px;
+            height: 45px;
+            background: #e8f5e9;
+            color: #2ecc71;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        .activity-info h6 { margin: 0; font-size: 0.95rem; font-weight: 600; }
+        .activity-info small { color: #95a5a6; font-size: 0.75rem; }
+        .status-pill {
+            margin-left: auto;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+        }
+        .nav-item { color: #bdc3c7; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: #2ecc71; transform: translateY(-5px); }
+        .nav-center {
+            background: #2ecc71;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-top: -35px;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+            cursor: pointer;
+        }
+
+        #preview-img { width: 100%; border-radius: 15px; margin-top: 15px; display: none; border: 2px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <div class="user-welcome">Hello, Citizen 👋</div>
+                <h1 class="app-title">SwachhSnap</h1>
+            </div>
+            <i class="fas fa-bell text-white fs-5"></i>
+        </div>
+    </div>
+
+    <div class="action-card">
+        <div class="location-badge">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="loc-status">Locating you...</span>
+        </div>
+
+        <div class="buttons-container">
+            <label class="scan-btn btn-camera">
+                <i class="fas fa-camera scan-icon" style="color: #2ecc71;"></i>
+                <span class="btn-label" style="color: #2ecc71;">Camera</span>
+                <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" onchange="showPreview(this)">
+            </label>
+
+            <label class="scan-btn btn-gallery">
+                <i class="fas fa-images scan-icon" style="color: #f39c12;"></i>
+                <span class="btn-label" style="color: #f39c12;">Gallery</span>
+                <input type="file" id="galleryInput" accept="image/*" style="display:none" onchange="showPreview(this)">
+            </label>
+        </div>
+        
+        <h5 style="font-weight: 600; color: #2c3e50;">Report Waste</h5>
+        <p class="text-muted small">Choose <b>Gallery</b> if Camera crashes.</p>
+
+        <img id="preview-img" src="">
+        <button id="upload-btn" class="btn btn-success w-100 mt-3 rounded-pill" style="display:none;">
+            Submit Report <i class="fas fa-arrow-right ms-2"></i>
+        </button>
+    </div>
+
+    <div class="section-title">Recent Activity</div>
+
+    <div class="activity-item">
+        <div class="activity-icon"><i class="fas fa-trash"></i></div>
+        <div class="activity-info">
+            <h6>Plastic Waste</h6>
+            <small>Shivaji Park • 2 hrs ago</small>
+        </div>
+        <div class="status-pill">Pending</div>
+    </div>
+
+    <div class="activity-item">
+        <div class="activity-icon"><i class="fas fa-recycle"></i></div>
+        <div class="activity-info">
+            <h6>Metal Scraps</h6>
+            <small>Station Road • Yesterday</small>
+        </div>
+        <div class="status-pill" style="background:#d4edda; color:#155724;">Cleared</div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active"><i class="fas fa-home"></i></div>
+        <div class="nav-item"><i class="fas fa-history"></i></div>
+        
+        <div class="nav-center" onclick="document.getElementById('cameraInput').click()">
+            <i class="fas fa-camera"></i>
+        </div>
+
+        <div class="nav-item"><i class="fas fa-chart-pie"></i></div>
+        <div class="nav-item"><i class="fas fa-user"></i></div>
+    </div>
+
+    <script>
+    // 1. Setup Global Variables
+    let myLat = 0.0000; 
+    let myLong = 0.0000;
+    let selectedFile = null;
+
+    // 2. Get Location (with fallback for Laptop/Testing)
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                myLat = position.coords.latitude;
+                myLong = position.coords.longitude;
+                document.getElementById('loc-status').innerText = "📍 Ready: " + myLat.toFixed(4) + ", " + myLong.toFixed(4);
+            },
+            (error) => {
+                // If GPS fails, user still sees a status
+                document.getElementById('loc-status').innerText = "📍 GPS Simulation Active";
+            }
+        );
+    }
+
+    // 3. Show Preview (Works for BOTH buttons)
+    function showPreview(input) {
+        if (input.files && input.files[0]) {
+            selectedFile = input.files[0]; // Save the file to global variable
+            document.getElementById('preview-img').src = URL.createObjectURL(selectedFile);
+            document.getElementById('preview-img').style.display = "block";
+            document.getElementById('upload-btn').style.display = "block";
+        }
+    }
+
+    // 4. THE UPLOAD LOGIC
+    document.getElementById('upload-btn').addEventListener('click', function() {
+        const btn = this;
+
+        if(!selectedFile) { alert("Please select a photo first!"); return; }
+
+        // Change button to "Uploading..."
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+        btn.disabled = true;
+
+        // Prepare Data
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+        
+        // Use Real GPS or Generate Fake GPS if 0.000 (for Laptop Demo)
+        if(myLat === 0 && myLong === 0) {
+            // Fake Kolhapur Location generator (Simulation Mode)
+            myLat = 16.7050 + (Math.random() - 0.5) / 100;
+            myLong = 74.2433 + (Math.random() - 0.5) / 100;
+        }
+        
+        formData.append('latitude', myLat);
+        formData.append('longitude', myLong);
+
+        // Send to PHP Server
+        fetch('upload.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json()) // Expect JSON from PHP
+        .then(data => {
+            if(data.status === "success") {
+                alert("✅ SUCCESS!\nWaste Type: " + data.waste_type);
+                location.reload(); // Refresh page to clear
+            } else {
+                alert("❌ Server Error: " + data.message);
+                btn.innerHTML = 'Submit Report';
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert("❌ Upload Failed. Check if XAMPP is running or file is too big.");
+            btn.innerHTML = 'Submit Report';
+            btn.disabled = false;
+        });
+    });
+    </script>
+
+</body>
+</html>
